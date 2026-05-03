@@ -11,6 +11,20 @@ ball_scale = 1
 ball_scaledirection = 1
 WIDTH, HEIGHT = 800, 600
 init()
+
+mixer.init()
+sound_wallhit = mixer.Sound('beep.wav')
+sound_wallhit.set_volume(1.0)
+
+sound_bounce = mixer.Sound('bounce.wav')
+sound_bounce.set_volume(1.0)
+
+sound_loss = mixer.Sound('loss.wav')
+sound_loss.set_volume(1.0)
+
+sound_victory = mixer.Sound('victory.wav')
+sound_victory.set_volume(1.0)
+
 screen = display.set_mode((WIDTH, HEIGHT))
 clock = time.Clock()
 display.set_caption("Пінг-Понг")
@@ -59,6 +73,7 @@ def transformation(angle, scale):
 game_over = False
 winner = None
 you_winner = None
+end_sound = False
 my_id, game_state, buffer, client = connect_to_server()
 Thread(target=receive, daemon=True).start()
 while True:
@@ -82,6 +97,13 @@ while True:
             else:
                 you_winner = False
 
+        if not end_sound:
+            if you_winner:
+                sound_victory.play()
+            else: 
+                sound_loss.play()
+            end_sound = True
+
         if you_winner:
             text = "Ти переміг!"
         else:
@@ -96,6 +118,10 @@ while True:
         screen.blit(text, text_rect)
 
         display.update()
+        keys = key.get_pressed()
+        if keys:
+            you_winner = None
+            end_sound = False
         continue  # Блокує гру після перемоги
 
     if game_state:
@@ -121,10 +147,10 @@ while True:
         if game_state['sound_event']:
             if game_state['sound_event'] == 'wall_hit':
                 # звук відбиття м'ячика від стін
-                pass
+                sound_bounce.play()
             if game_state['sound_event'] == 'platform_hit':
                 # звук відбиття м'ячика від платформи
-                pass
+                sound_wallhit.play()
 
     else:
         wating_text = font_main.render(f"Очікування гравців...", True, (255, 255, 255))
