@@ -4,6 +4,11 @@ import json
 from threading import Thread
 
 # ---ПУГАМЕ НАЛАШТУВАННЯ ---
+ball_image = image.load("ballimg.png")
+ball_image = transform.scale(ball_image, (50,50))
+ball_angle = 0 
+ball_scale = 1
+ball_scaledirection = 1
 WIDTH, HEIGHT = 800, 600
 init()
 screen = display.set_mode((WIDTH, HEIGHT))
@@ -42,7 +47,13 @@ font_win = font.Font(None, 72)
 font_main = font.Font(None, 36)
 # --- ЗОБРАЖЕННЯ ----
 
-# --- ЗВУКИ ---
+
+def transformation(angle, scale):
+    original_size = ball_image.get_size()
+    new_size = (int(original_size[0] * scale), int(original_size[1] * scale))
+    new_image = transform.scale(ball_image, new_size)
+    return transform.rotate(new_image, angle)
+
 
 # --- ГРА ---
 game_over = False
@@ -91,7 +102,19 @@ while True:
         screen.fill((30, 30, 30))
         draw.rect(screen, (0, 255, 0), (20, game_state['paddles']['0'], 20, 100))
         draw.rect(screen, (255, 0, 255), (WIDTH - 40, game_state['paddles']['1'], 20, 100))
-        draw.circle(screen, (255, 255, 255), (game_state['ball']['x'], game_state['ball']['y']), 10)
+        ball_angle += 20 
+        ball_angle %= 3601
+        ball_scale += ball_scaledirection * 0.0
+        if ball_scale >=1.2:
+            ball_scaledirection = -1
+        elif ball_scale <= 0.8:
+            ball_scaledirection = 1
+        new_ball = transformation(ball_angle, ball_scale)
+        ball_rect = new_ball.get_rect()
+        ball_rect.center = (game_state["ball"]["x"], game_state["ball"]["y"])
+        screen.blit(new_ball, ball_rect)
+
+             
         score_text = font_main.render(f"{game_state['scores'][0]} : {game_state['scores'][1]}", True, (255, 255, 255))
         screen.blit(score_text, (WIDTH // 2 -25, 20))
 
