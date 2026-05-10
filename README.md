@@ -30,7 +30,7 @@
 
 ## 🖼️ Як виглядає гра
 
-![exampleimg.png]
+![exampleimg.png](image.png)
 
 
 ## Як запустити проєкт
