@@ -101,7 +101,7 @@ while True:
         if not end_sound:
             if you_winner:
                 sound_victory.play()
-            else: 
+            elif game_over:
                 sound_loss.play()
             end_sound = True
 
