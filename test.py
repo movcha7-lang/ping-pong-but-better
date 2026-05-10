@@ -16,3 +16,4 @@ sound_victory = mixer.Sound('victory.wav')
 sound_victory.set_volume(1.0)
 
 sound_wallhit.play()
+input("67")
